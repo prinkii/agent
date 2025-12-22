@@ -16,7 +16,7 @@ public class PrintAgent {
 
     public static void main(String[] args) {
         try {
-            File pdfFile = new File("D:/Printer/Codes/agent/pdf/1.pdf");
+            File pdfFile = new File("D:/Printer/Codes/agent/pdf/test1.pdf");
             PDDocument document = PDDocument.load(pdfFile);
 
             PrintService printer = PrintServiceLookup.lookupDefaultPrintService();
@@ -25,9 +25,10 @@ public class PrintAgent {
             job.setPrintService(printer);
             job.setPrintable(new PDFPrintable(document));
 
-            boolean customPage = true;
+            boolean customPage = false;
             int startPage = 1;
-            int endPage = 4;
+            int endPage = 2;
+            boolean isColor = true; // false = B/W, true = Color 
 
             PrintRequestAttributeSet attributes =
                     new HashPrintRequestAttributeSet();
@@ -37,6 +38,10 @@ public class PrintAgent {
             if (customPage) {
                 attributes.add(new PageRanges(startPage, endPage));
             }
+
+            attributes.add(isColor
+                    ? Chromaticity.COLOR
+                    : Chromaticity.MONOCHROME);
 
 
 
