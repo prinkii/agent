@@ -7,7 +7,6 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.print.attribute.standard.PageRanges;
-import javax.print.attribute.standard.Chromaticity;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPrintable;
@@ -19,39 +18,52 @@ public class PrintAgent {
             File pdfFile = new File("D:/Printer/Codes/agent/pdf/test1.pdf");
             PDDocument document = PDDocument.load(pdfFile);
 
-            PrintService printer = PrintServiceLookup.lookupDefaultPrintService();
+            boolean isColor = false;       // true = Color, false = B/W
+            boolean customPage = true;
+            int startPage = 1;
+            int endPage = 2;
+            int copies = 1;
+
+            String COLOR_PRINTER = "Kiosk_ColorOnly";
+            String BW_PRINTER    = "Kiosk_BlackOnly";
+
+            String selectedPrinter =
+                    isColor ? COLOR_PRINTER : BW_PRINTER;
+
+            PrintService printer = findPrinter(selectedPrinter);
 
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPrintService(printer);
             job.setPrintable(new PDFPrintable(document));
 
-            boolean customPage = false;
-            int startPage = 1;
-            int endPage = 2;
-            boolean isColor = true; // false = B/W, true = Color 
-
-            PrintRequestAttributeSet attributes =
+            PrintRequestAttributeSet attrs =
                     new HashPrintRequestAttributeSet();
 
-            attributes.add(new Copies(1));
+            attrs.add(new Copies(copies));
 
             if (customPage) {
-                attributes.add(new PageRanges(startPage, endPage));
+                attrs.add(new PageRanges(startPage, endPage));
             }
 
-            attributes.add(isColor
-                    ? Chromaticity.COLOR
-                    : Chromaticity.MONOCHROME);
-
-
-
-            job.print(attributes);
+            job.print(attrs);
             document.close();
 
-            System.out.println("Printed with copies");
+            System.out.println(
+                "Printed successfully via: " + selectedPrinter
+            );
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static PrintService findPrinter(String name) {
+        for (PrintService ps :
+                PrintServiceLookup.lookupPrintServices(null, null)) {
+            if (ps.getName().equalsIgnoreCase(name)) {
+                return ps;
+            }
+        }
+        throw new RuntimeException("Printer not found: " + name);
     }
 }
