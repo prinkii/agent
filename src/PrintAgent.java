@@ -1,6 +1,5 @@
 import java.io.File;
 import java.awt.print.PrinterJob;
-
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.attribute.HashPrintRequestAttributeSet;
@@ -18,7 +17,7 @@ public class PrintAgent {
             File pdfFile = new File("D:/Printer/Codes/agent/pdf/test1.pdf");
             PDDocument document = PDDocument.load(pdfFile);
 
-            boolean isColor = false;       // true = Color, false = B/W
+            boolean isColor = true;       // true = Color, false = B/W
             boolean customPage = true;
             int startPage = 1;
             int endPage = 2;
@@ -47,6 +46,22 @@ public class PrintAgent {
 
             job.print(attrs);
             document.close();
+            // =========================================================
+            boolean wasInQueue = false;
+            while (true) {
+                boolean inQueue = PrintJobMonitor.isJobInQueue(printer.getName());
+
+
+                if (inQueue) {
+                    wasInQueue = true;
+                    System.out.println("IN_QUEUE");
+                } else if (wasInQueue) {
+                    System.out.println("COMPLETED");
+                    break;
+                }
+
+                Thread.sleep(1000); // poll every second
+            }
 
             System.out.println(
                 "Printed successfully via: " + selectedPrinter
