@@ -17,14 +17,14 @@ public class PrintAgent {
             File pdfFile = new File("D:/Printer/Codes/agent/pdf/test1.pdf");
             PDDocument document = PDDocument.load(pdfFile);
 
-            boolean isColor = true;       // true = Color, false = B/W
-            boolean customPage = true;
+            boolean isColor = false;       // true = Color, false = B/W
+            boolean customPage = false;
             int startPage = 1;
-            int endPage = 2;
+            int endPage = 2;   
             int copies = 1;
 
-            String COLOR_PRINTER = "Kiosk_ColorOnly";
-            String BW_PRINTER    = "Kiosk_BlackOnly";
+            String COLOR_PRINTER = "T230 KioskColor";
+            String BW_PRINTER    = "T230 KioskBW";
 
             String selectedPrinter =
                     isColor ? COLOR_PRINTER : BW_PRINTER;
